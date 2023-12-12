@@ -31,7 +31,26 @@ router.get("/", async (req, res) => {
     res.status(500).send("Something went wrong");
   }
 });
+router.get("/user/:userId", async (req, res) => {
+  try {
+    const { userId } = req.params;
 
+    const statusUpdates = await StatusUpdate.find({ user: userId })
+      .populate("user", "username")
+      .select("content createdAt");
+
+    const formattedUpdates = statusUpdates.map((update) => ({
+      username: update.user.username,
+      content: update.content,
+      createdAt: update.createdAt,
+    }));
+
+    res.status(200).json(formattedUpdates);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Server error");
+  }
+});
 router.put("/:id", async (req, res) => {
   try {
     const { content } = req.body;
