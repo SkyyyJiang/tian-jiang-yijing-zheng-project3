@@ -1,5 +1,4 @@
 const express = require("express");
-const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 
@@ -9,35 +8,23 @@ router.post("/register", async (req, res) => {
   try {
     const { username, password } = req.body;
 
-    if (!(username && password)) {
-      return res.status(400).send("All input is required");
+    let user = await User.findOne({ username });
+    if (user) {
+      return res.status(400).send("User already exists");
     }
 
-    const oldUser = await User.findOne({ username });
-
-    if (oldUser) {
-      return res.status(409).send("User Already Exists. Please Login");
-    }
-
-    const encryptedPassword = await bcrypt.hash(password, 10);
-
-    const user = await User.create({
+    user = new User({
       username,
-      password: encryptedPassword,
+      password,
+      isLoggedIn: false,
     });
 
-    const token = jwt.sign(
-      { user_id: user._id, username },
-      process.env.JWT_SECRET,
-      { expiresIn: "2h" }
-    );
+    await user.save();
 
-    user.token = token;
-
-    res.status(201).json(user);
+    res.status(201).send("User registered successfully");
   } catch (err) {
-    console.log(err);
-    res.status(500).send("Something went wrong");
+    console.error(err);
+    res.status(500).send("Server error");
   }
 });
 
@@ -45,28 +32,47 @@ router.post("/login", async (req, res) => {
   try {
     const { username, password } = req.body;
 
-    if (!(username && password)) {
-      res.status(400).send("All input is required");
+    const user = await User.findOne({ username });
+    if (!user) {
+      return res.status(401).send("Invalid credentials1");
     }
+
+    if (user.password !== password) {
+      return res.status(401).send("Invalid credentials2");
+    }
+
+    user.isLoggedIn = true;
+    await user.save();
+
+    const token = jwt.sign({ user_id: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "2h",
+    });
+    res.json({
+      message: "Login successful",
+      user: { username: user.username, isLoggedIn: user.isLoggedIn },
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Server error");
+  }
+});
+
+router.post("/logout", async (req, res) => {
+  try {
+    const { username } = req.body;
 
     const user = await User.findOne({ username });
-
-    if (user && (await bcrypt.compare(password, user.password))) {
-      const token = jwt.sign(
-        { user_id: user._id, username },
-        process.env.JWT_SECRET,
-        { expiresIn: "2h" }
-      );
-
-      user.token = token;
-
-      res.status(200).json(user);
-    } else {
-      res.status(400).send("Invalid Credentials");
+    if (!user) {
+      return res.status(404).send("User not found");
     }
+
+    user.isLoggedIn = false;
+    await user.save();
+
+    res.send("User logged out successfully");
   } catch (err) {
-    console.log(err);
-    res.status(500).send("Something went wrong");
+    console.error(err);
+    res.status(500).send("Server error");
   }
 });
 
