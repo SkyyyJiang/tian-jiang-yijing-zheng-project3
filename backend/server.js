@@ -3,6 +3,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 require("dotenv").config();
+const path = require('path');
 
 const app = express();
 app.use(cors());
@@ -21,6 +22,14 @@ const statusRoutes = require("./apis/statusRoutes");
 
 app.use("/api/auth", authRoutes);
 app.use("/api/status", statusRoutes);
+
+let frontend_dir = path.join(__dirname, '..', 'frontend', 'dist')
+
+app.use(express.static(frontend_dir));
+app.get('*', function (req, res) {
+    console.log("received request");
+    res.sendFile(path.join(frontend_dir, "index.html"));
+});
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
