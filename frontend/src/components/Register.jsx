@@ -42,7 +42,7 @@ export default function Register() {
     return (
         <div>
             <h1>Register New User</h1>
-            {!!error && <h3>{error}</h3>}
+            
             <div>
                 <span>Username: </span><input type='text' value={usernameInput} onInput={setUsername}></input>
             </div>
@@ -51,6 +51,9 @@ export default function Register() {
             </div>
 
             <button onClick={submit}>Create Account/Login</button>
+
+            {!!error && <h3>{error}</h3>}
+            
         </div>
     )
 }
