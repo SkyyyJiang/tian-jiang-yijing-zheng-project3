@@ -2,7 +2,7 @@ const express = require("express");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 const router = express.Router();
-import isUserVerified from "./helper";
+const { isUserVerified } = require("./helper.js");
 
 router.post("/register", async (req, res) => {
   try {
@@ -43,8 +43,8 @@ router.post("/login", async (req, res) => {
       return res.status(401).send("Invalid password");
     }
 
-    user.isLoggedIn = true;
-    await user.save();
+    // user.isLoggedIn = true;
+    // await user.save();
 
     const token = jwt.sign(username, process.env.JWT_SECRET);
     // res.json({

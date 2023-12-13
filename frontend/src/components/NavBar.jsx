@@ -11,14 +11,14 @@ export default function NavBar() {
     async function checkIfUserIsLoggedIn() {
         const response = await axios.get('/api/auth/isLoggedIn')
         setActiveUsername(response.data.username)
-        console.log(activeUsername);
     }
 
     useEffect(() => { checkIfUserIsLoggedIn() }, []);
 
     async function logOutUser() {
-        await axios.post('/api/auth/logout')
-        setActiveUsername(null)
+        await axios.post('/api/auth/logout');
+        setActiveUsername(null);
+        window.location.reload();
     }
 
     if (!activeUsername) {

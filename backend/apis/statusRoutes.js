@@ -1,12 +1,11 @@
 const express = require("express");
 const StatusUpdate = require("../models/StatusUpdate");
 const router = express.Router();
-import isUserVerified from "./helper";
+const { isUserVerified } = require("./helper.js");
 
 router.post("/", async (req, res) => {
   try {
-    // const { content, username } = req.body;
-    const username = req.body.username;
+    const { username, content } = req.body;
 
     if (!isUserVerified(req, username)) {
       return res.status(401).send("User is not authorized")
@@ -27,10 +26,7 @@ router.post("/", async (req, res) => {
 
 router.get("/", async (req, res) => {
   try {
-    const statusUpdates = await StatusUpdate.find().populate(
-      "user",
-      "username"
-    );
+    const statusUpdates = await StatusUpdate.find().sort({ createdAt: -1 })
     res.status(200).json(statusUpdates);
   } catch (err) {
     console.log(err);
@@ -59,6 +55,9 @@ router.get("/user/:userId", async (req, res) => {
   }
 });
 
+/**
+ * update post by post id
+ */
 router.put("/:id", async (req, res) => {
   try {
     const { content } = req.body;
