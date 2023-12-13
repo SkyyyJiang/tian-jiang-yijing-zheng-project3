@@ -1,5 +1,6 @@
 import axios from 'axios';
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router';
 
 export default function Register() {
@@ -41,8 +42,6 @@ export default function Register() {
 
     return (
         <div>
-            <h1>Register New User</h1>
-            
             <div>
                 <span>Username: </span><input type='text' value={usernameInput} onInput={setUsername}></input>
             </div>
@@ -50,7 +49,9 @@ export default function Register() {
                 <span>Password: </span><input type='text' value={passwordInput} onInput={setPassword}></input>
             </div>
 
-            <button onClick={submit}>Create Account/Login</button>
+            <button onClick={submit}>Create Account</button>
+
+            <div>Already have an account?  <Link to="/login">Sign in</Link></div>
 
             {!!error && <h3>{error}</h3>}
             
