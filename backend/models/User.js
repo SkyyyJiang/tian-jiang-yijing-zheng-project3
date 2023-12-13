@@ -10,10 +10,17 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  isLoggedIn: {
-    type: Boolean,
-    default: false,
+  // isLoggedIn: {
+  //   type: Boolean,
+  //   default: false,
+  // },
+  joinedDate: {
+    type: Date,
+    default: Date.now,
   },
+  description: {
+    type: String,
+  }
 });
 
 module.exports = mongoose.model("User", userSchema);

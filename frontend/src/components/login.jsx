@@ -49,7 +49,7 @@ export default function Login() {
                 <span>Password: </span><input type='text' value={passwordInput} onInput={setPassword}></input>
             </div>
 
-            <button onClick={submit}>Log In</button>
+            <button onClick={submit}>Sign In</button>
 
             <div>Don't have an account?  <Link to="/register">Create new account</Link></div>
 

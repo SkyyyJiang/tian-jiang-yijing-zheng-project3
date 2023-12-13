@@ -16,10 +16,12 @@ router.post("/register", async (req, res) => {
     user = new User({
       username,
       password,
-      isLoggedIn: false,
+      // isLoggedIn: true,
     });
 
     await user.save();
+    const token = jwt.sign(username, process.env.JWT_SECRET);
+    res.cookie("username", token);
 
     res.status(201).send("User registered successfully");
   } catch (err) {
@@ -34,23 +36,23 @@ router.post("/login", async (req, res) => {
 
     const user = await User.findOne({ username });
     if (!user) {
-      return res.status(401).send("Invalid credentials1");
+      return res.status(401).send("Username not found");
     }
 
     if (user.password !== password) {
-      return res.status(401).send("Invalid credentials2");
+      return res.status(401).send("Invalid password");
     }
 
     user.isLoggedIn = true;
     await user.save();
 
-    const token = jwt.sign({ user_id: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "2h",
-    });
-    res.json({
-      message: "Login successful",
-      user: { username: user.username, isLoggedIn: user.isLoggedIn },
-    });
+    const token = jwt.sign(username, process.env.JWT_SECRET);
+    // res.json({
+    //   message: "Login successful",
+    //   user: { username: user.username, isLoggedIn: user.isLoggedIn },
+    // });
+    res.cookie("username", token);
+    return res.send("Login successful");
   } catch (err) {
     console.error(err);
     res.status(500).send("Server error");
@@ -58,22 +60,52 @@ router.post("/login", async (req, res) => {
 });
 
 router.post("/logout", async (req, res) => {
-  try {
-    const { username } = req.body;
+  // try {
+  //   const { username } = req.body;
 
-    const user = await User.findOne({ username });
-    if (!user) {
-      return res.status(404).send("User not found");
-    }
+  //   const user = await User.findOne({ username });
+  //   if (!user) {
+  //     return res.status(404).send("User not found");
+  //   }
 
-    user.isLoggedIn = false;
-    await user.save();
+  //   user.isLoggedIn = false;
+  //   await user.save();
 
-    res.send("User logged out successfully");
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Server error");
-  }
+  //   res.send("User logged out successfully");
+  // } catch (err) {
+  //   console.error(err);
+  //   res.status(500).send("Server error");
+  // }
+  res.cookie('username', '', { maxAge: 0, });
+
+  res.send(true);
 });
+
+
+/**
+ * return username
+ * if user is logged in, return the actual username, else return null
+ */
+router.get('/isLoggedIn', async function (req, res) {
+
+  const username = req.cookies.username;
+
+  if (!username) {
+    return res.send({ username: null });
+  }
+  let decryptedUsername;
+  try {
+    decryptedUsername = jwt.verify(username, process.env.JWT_SECRET);
+  } catch (e) {
+    return res.send({ username: null });
+  }
+
+  if (!decryptedUsername) {
+    return res.send({ username: null });
+  } else {
+    return res.send({ username: decryptedUsername });
+  }
+
+})
 
 module.exports = router;
