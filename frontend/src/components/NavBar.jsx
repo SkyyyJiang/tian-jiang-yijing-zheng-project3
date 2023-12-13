@@ -1,7 +1,7 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 
-// import './Header.css';
+import './NavBar.css';
 import { Link } from 'react-router-dom';
 
 export default function NavBar() {
@@ -14,33 +14,33 @@ export default function NavBar() {
         console.log(activeUsername);
     }
 
-    useEffect(() => {
-        checkIfUserIsLoggedIn()
-    }, []);
+    useEffect(() => { checkIfUserIsLoggedIn() }, []);
 
     async function logOutUser() {
-
         await axios.post('/api/auth/logout')
         setActiveUsername(null)
     }
 
     if (!activeUsername) {
-
         return (
-            <div className='header'>
-                <Link to="/login" >Sign in</Link>
-                <Link to="/register" >Register</Link>
+            <div className='nav-container'>
+                <div><Link to="/" className="nav-title">Not Twitter</Link></div>
+                <ul>
+                    <li><Link to="/login" className='clickable-text'>sign in</Link></li>
+                    <li><Link to="/register" className='clickable-text'>register</Link></li>
+                </ul>
             </div>
         )
-
     }
 
     return (
-        <div className='header'>
-            <div>Welcome, {activeUsername}</div>
-            <button onClick={logOutUser}>Log Out</button>
+        <div className='nav-container'>
+            <div><Link to="/" className="nav-title">Not Twitter</Link></div>
+            <ul>
+                <li>Welcome, <span>{activeUsername}</span></li>
+                <li onClick={logOutUser}><span className='clickable-text'>log out</span></li>
+            </ul>
         </div>
-
     )
 
 }

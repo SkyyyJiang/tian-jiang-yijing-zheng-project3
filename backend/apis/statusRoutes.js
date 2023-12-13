@@ -1,16 +1,22 @@
 const express = require("express");
 const StatusUpdate = require("../models/StatusUpdate");
 const router = express.Router();
+import isUserVerified from "./helper";
 
 router.post("/", async (req, res) => {
   try {
-    const { content, user } = req.body;
+    // const { content, username } = req.body;
+    const username = req.body.username;
+
+    if (!isUserVerified(req, username)) {
+      return res.status(401).send("User is not authorized")
+    }
 
     if (!content) {
       return res.status(400).send("Content is required");
     }
 
-    const statusUpdate = await StatusUpdate.create({ content, user });
+    const statusUpdate = await StatusUpdate.create(req.body);
 
     res.status(201).json(statusUpdate);
   } catch (err) {
@@ -31,6 +37,7 @@ router.get("/", async (req, res) => {
     res.status(500).send("Something went wrong");
   }
 });
+
 router.get("/user/:userId", async (req, res) => {
   try {
     const { userId } = req.params;
@@ -51,6 +58,7 @@ router.get("/user/:userId", async (req, res) => {
     res.status(500).send("Server error");
   }
 });
+
 router.put("/:id", async (req, res) => {
   try {
     const { content } = req.body;
