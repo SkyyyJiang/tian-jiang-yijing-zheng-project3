@@ -16,7 +16,6 @@ router.post("/register", async (req, res) => {
     user = new User({
       username,
       password,
-      // isLoggedIn: true,
     });
 
     await user.save();
@@ -33,24 +32,14 @@ router.post("/register", async (req, res) => {
 router.post("/login", async (req, res) => {
   try {
     const { username, password } = req.body;
-
     const user = await User.findOne({ username });
     if (!user) {
       return res.status(401).send("Username not exist");
     }
-
     if (user.password !== password) {
       return res.status(401).send("Invalid password");
     }
-
-    // user.isLoggedIn = true;
-    // await user.save();
-
     const token = jwt.sign(username, process.env.JWT_SECRET);
-    // res.json({
-    //   message: "Login successful",
-    //   user: { username: user.username, isLoggedIn: user.isLoggedIn },
-    // });
     res.cookie("username", token);
     return res.send("Login successful");
   } catch (err) {
@@ -60,24 +49,7 @@ router.post("/login", async (req, res) => {
 });
 
 router.post("/logout", async (req, res) => {
-  // try {
-  //   const { username } = req.body;
-
-  //   const user = await User.findOne({ username });
-  //   if (!user) {
-  //     return res.status(404).send("User not found");
-  //   }
-
-  //   user.isLoggedIn = false;
-  //   await user.save();
-
-  //   res.send("User logged out successfully");
-  // } catch (err) {
-  //   console.error(err);
-  //   res.status(500).send("Server error");
-  // }
   res.cookie('username', '', { maxAge: 0, });
-
   res.send(true);
 });
 
@@ -109,7 +81,8 @@ router.get("/isLoggedIn", async function(req, res) {
 })
 
 router.get("/:username", async function(req, res) {
-  const username = req.params.username;
+  const { username } = req.params;
+  console.log(username);
   const user = await User.findOne({ username });
   return res.send(user);
 })

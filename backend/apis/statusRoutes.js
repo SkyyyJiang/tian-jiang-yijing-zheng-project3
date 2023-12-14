@@ -34,21 +34,11 @@ router.get("/", async (req, res) => {
   }
 });
 
-router.get("/user/:userId", async (req, res) => {
+router.get("/user/:username", async (req, res) => {
   try {
-    const { userId } = req.params;
-
-    const statusUpdates = await StatusUpdate.find({ user: userId })
-      .populate("user", "username")
-      .select("content createdAt");
-
-    const formattedUpdates = statusUpdates.map((update) => ({
-      username: update.user.username,
-      content: update.content,
-      createdAt: update.createdAt,
-    }));
-
-    res.status(200).json(formattedUpdates);
+    const { username } = req.params;
+    const statusUpdates = await StatusUpdate.find({ username: username }).sort({ createdAt: -1 });
+    res.status(200).json(statusUpdates);
   } catch (err) {
     console.error(err);
     res.status(500).send("Server error");
@@ -59,9 +49,13 @@ router.get("/user/:userId", async (req, res) => {
  * update post by post id
  */
 router.put("/:id", async (req, res) => {
+  const { username, content } = req.body;
+  const { id } = req.params;
+
   try {
-    const { content } = req.body;
-    const { id } = req.params;
+    if (!isUserVerified(req, username)) {
+      return res.status(401).send("User is not authorized")
+    }
 
     const statusUpdate = await StatusUpdate.findByIdAndUpdate(
       id,
@@ -70,7 +64,7 @@ router.put("/:id", async (req, res) => {
     );
 
     if (!statusUpdate) {
-      return res.status(404).send("Status Update not found");
+      return res.status(404).send("Status not found");
     }
 
     res.status(200).json(statusUpdate);
@@ -81,16 +75,20 @@ router.put("/:id", async (req, res) => {
 });
 
 router.delete("/:id", async (req, res) => {
+  const { id } = req.params;
   try {
-    const { id } = req.params;
-
-    const statusUpdate = await StatusUpdate.findByIdAndDelete(id);
-
-    if (!statusUpdate) {
-      return res.status(404).send("Status Update not found");
+    const status = await StatusUpdate.findById(id);
+    if (!isUserVerified(req, status.username)) {
+      return res.status(401).send("User is not authorized")
     }
 
-    res.status(200).send("Status Update deleted");
+    const statusUpdate = await StatusUpdate.findByIdAndDelete(id);
+    
+    if (!statusUpdate) {
+      return res.status(404).send("Status not found");
+    }
+
+    res.status(200).send("Status deleted");
   } catch (err) {
     console.log(err);
     res.status(500).send("Something went wrong");

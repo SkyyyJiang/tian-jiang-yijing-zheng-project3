@@ -1,71 +1,18 @@
-import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React from "react";
+import { useActiveUser } from "../context/ActiveUserContext";
+
 import NavBar from "./NavBar";
-import WriteStatus from "./WriteStatus";
-import styles from "./HomePage.module.css";
+import CreateStatus from "./CreateStatus";
+import DisplayStatus from "./DisplayStatus";
+
 export default function Home() {
-  const [activeUsername, setActiveUsername] = useState(null);
-  const [posts, setPosts] = useState([]);
-
-  async function checkIfUserIsLoggedIn() {
-    try {
-      const response = await axios.get("/api/auth/isLoggedIn");
-      setActiveUsername(response.data.username);
-    } catch (error) {
-      console.error("Error checking login status:", error);
-    }
-  }
-
-  async function fetchPosts() {
-    try {
-      const response = await axios.get("/api/status");
-      setPosts(response.data);
-    } catch (error) {
-      console.error("Error fetching posts:", error);
-    }
-  }
-
-  const handleDelete = async (postId) => {
-    if (!postId) {
-      console.error("Post ID is undefined");
-      return;
-    }
-    try {
-      await axios.delete(`http://localhost:3000/api/status/${postId}`);
-      setPosts((currentPosts) =>
-        currentPosts.filter((post) => post._id !== postId)
-      );
-    } catch (error) {
-      console.error("Error deleting post:", error);
-    }
-  };
-
-  useEffect(() => {
-    checkIfUserIsLoggedIn();
-    fetchPosts();
-  }, []);
+  const { activeUsername } = useActiveUser();
 
   return (
-    <>
+    <div>
       <NavBar />
-      {activeUsername && <WriteStatus username={activeUsername} />}
-      <div className={styles.postsContainer}>
-        <div className={styles.posts}>
-          {posts.map((post) => (
-            <div key={post._id} className={styles.post}>
-              <h3>{post.username}</h3>
-              <p>{post.content}</p>
-              <p>
-                Posted on:{" "}
-                {new Date(post.createdAt).toLocaleDateString("en-US")}
-              </p>
-              {activeUsername === post.username && (
-                <button onClick={() => handleDelete(post._id)}>Delete</button>
-              )}
-            </div>
-          ))}
-        </div>
-      </div>
-    </>
+      {activeUsername && <CreateStatus username={activeUsername} />}
+      <DisplayStatus activeUsername={activeUsername} searchUsername={null}/>
+    </div>
   );
 }
