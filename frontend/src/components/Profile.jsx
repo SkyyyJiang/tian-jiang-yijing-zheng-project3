@@ -1,12 +1,14 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import { useParams } from 'react-router-dom'
 import { useActiveUser } from "../context/ActiveUserContext";
 
 import NavBar from "./NavBar";
 import CreateStatus from "./CreateStatus";
 import DisplayStatus from "./DisplayStatus";
 
-export default function Profile({ username }) {
+export default function Profile() {
+    const { username } = useParams();
     const { activeUsername } = useActiveUser();
     const [user, setUser] = useState([]);
     const [isEditting, setIsEditting] = useState(false);
@@ -21,7 +23,7 @@ export default function Profile({ username }) {
     async function getUserProfile() {
         try {
             const response = await axios.get(`/api/auth/${username}`);
-            setUser(response);
+            setUser(response.data);
         } catch (error) {
             console.error("Error getting user:", error);
         }
@@ -37,10 +39,10 @@ export default function Profile({ username }) {
         try {
             const response = await axios.put("/api/auth/editProfile", {
                 username: username,
-                content: descriptionInput,
+                description: descriptionInput,
             });
             setIsEditting(false);
-            // setDescription(descriptionInput)
+            setUser((currUser) => ({...currUser, description:  descriptionInput}));
         } catch (e) {
             console.error(e);
             setError("Something went wrong. Please try again.");
@@ -51,28 +53,38 @@ export default function Profile({ username }) {
         getUserProfile();
     }, []);
 
-    console.log(`active ${activeUsername} user ${username}`);
+    console.log(isEditting);
+    
+    if (!user) return;
 
     return (
         <div>
             <NavBar />
             <div>
-                <h1>don't block my info</h1>
+                <h1>profile</h1>
                 <div>{user.username}</div>
                 <div>{new Date(user.joinedDate).toLocaleDateString()}</div>
-                {activeUsername != username && <div>{user.description}</div>}
-                {activeUsername == username && isEditting ? (
-                    <div>
-                        <input type="text" value={descriptionInput} onInput={setDescription}></input>
-                        <button onClick={submit}>Save</button>
-                    </div>
+
+                {activeUsername != username ? (
+                    <div>{user.description}</div>
                 ) : (
                     <div>
-                        <div>{user.description}</div>
-                        <button onClick={edit}>edit</button>
+                        {isEditting &&
+                            <div>
+                                <input type="text" value={descriptionInput} onInput={setDescription}></input>
+                                <button onClick={submit}>Save</button>
+                            </div>
+                        }
+                        {!isEditting &&
+                            <div>
+                                <div>{user.description}</div>
+                                <button onClick={edit}>edit</button>
+                            </div>
+                        }
                     </div>
                 )}
             </div>
+            {!!error && <div>{error}</div>}
             {activeUsername == username && <CreateStatus username={activeUsername} />}
             <DisplayStatus activeUsername={activeUsername} searchUsername={username} />
         </div>

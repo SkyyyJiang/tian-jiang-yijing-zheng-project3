@@ -82,7 +82,6 @@ router.get("/isLoggedIn", async function(req, res) {
 
 router.get("/:username", async function(req, res) {
   const { username } = req.params;
-  console.log(username);
   const user = await User.findOne({ username });
   return res.send(user);
 })
@@ -93,7 +92,7 @@ router.put("/editProfile", async function(req, res) {
     return res.status(401).send("User is not authorized")
   }
   try {
-    const user = await User.findOneAndUpdate(username, {description: description}, {new: true});
+    const user = await User.findOneAndUpdate({ username }, {description: description}, {new: true});
     if (!user) {
       return res.status(401).send("Username not exist");
     } 
