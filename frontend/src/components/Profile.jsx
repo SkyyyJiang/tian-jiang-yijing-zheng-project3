@@ -36,7 +36,10 @@ export default function Profile() {
 
     async function submit() {
         setError("");
-        if (!descriptionInput) return;
+        if (!descriptionInput) {
+            setIsEditting(false);
+            return;
+        }
         try {
             const response = await axios.put("/api/auth/editProfile", {
                 username: username,
@@ -63,7 +66,7 @@ export default function Profile() {
             <NavBar />
             <div className="spacing"></div>
             <div className="user-profile-container">
-                <div>{user.username}</div>
+                <div className="username primary-text">{user.username}</div>
                 <div className="secondary-text">Joined {new Date(user.joinedDate).toLocaleDateString()}</div>
 
                 {activeUsername != username ? (
@@ -71,15 +74,15 @@ export default function Profile() {
                 ) : (
                     <div>
                         {isEditting &&
-                            <div>
+                            <div className="edit-description-container">
                                 <input type="text" value={descriptionInput} onInput={setDescription}></input>
                                 <button onClick={submit}>Save</button>
                             </div>
                         }
                         {!isEditting &&
-                            <div>
-                                <div>{user.description}</div>
-                                <button onClick={edit}>edit</button>
+                            <div className="description-container">
+                                <div className="primary-text">{user.description}</div>
+                                <div onClick={edit} className="clickable-text">edit</div>
                             </div>
                         }
                     </div>

@@ -1,0 +1,22 @@
+.login-container {
+    display: flex;
+    place-items: center;
+    justify-content: center;
+    height:max-content;
+    padding-top: 30vh;
+    gap: 8vh;
+}
+
+.welcome-text {
+    font-size: 96px;
+    font-weight: 900;
+    text-shadow: -8px -8px #1285b3;;
+}
+
+.spacing-small {
+    margin: 30px;
+}
+
+h3 {
+    text-align: center;
+}

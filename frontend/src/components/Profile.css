@@ -1,5 +1,16 @@
 .user-profile-container {
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    place-items: center;
+    gap: 16px;
+}
+
+.username {
+    font-size: 32px;
+    font-weight: 900;
+}
+
+.description-container, .edit-description-container {
+    display: flex;
+    gap: 16px;
 }

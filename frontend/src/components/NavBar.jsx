@@ -28,7 +28,7 @@ export default function NavBar() {
     <div className="nav-container">
       <div><Link to="/" className="nav-title">Not Twitter</Link></div>
       <ul>
-        <li><Link to={`/profile/${activeUsername}`}>{activeUsername}</Link></li>
+        <li><Link reloadDocument to={`/profile/${activeUsername}`}>{activeUsername}</Link></li>
         <li onClick={logOutUser}><span className="clickable-text">log out</span></li>
       </ul>
     </div>

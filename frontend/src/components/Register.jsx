@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router";
 import { useActiveUser } from "../context/ActiveUserContext";
+import "./login.css";
 
 export default function Register() {
   const [usernameInput, setUsernameInput] = useState("");
@@ -46,32 +47,27 @@ export default function Register() {
   }
 
   return (
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        height: "100vh",
-        paddingLeft: "680px",
-        flexDirection: "column",
-      }}
-    >
-      <div>
-        <span>Username: </span>
-        <input type="text" value={usernameInput} onInput={setUsername}></input>
+    <>
+      <div className="login-container">
+        <div className="welcome-text">Join Now</div>
+        <div>
+          <div>
+            <div>Username </div>
+            <input type="text" value={usernameInput} onInput={setUsername}></input>
+          </div>
+          <div>
+            <div>Password </div>
+            <input type="text" value={passwordInput} onInput={setPassword}></input>
+          </div>
+          <div className="spacing-small"></div>
+          <button onClick={submit}>Create Account</button>
+          <div className="spacing-small"></div>
+          <div>
+            Already have an account? <Link to="/login">Sign in</Link>
+          </div>
+        </div>
       </div>
-      <div>
-        <span>Password: </span>
-        <input type="text" value={passwordInput} onInput={setPassword}></input>
-      </div>
-
-      <button onClick={submit}>Create Account</button>
-
-      <div>
-        Already have an account? <Link to="/login">Sign in</Link>
-      </div>
-
       {!!error && <h3>{error}</h3>}
-    </div>
+    </>
   );
 }
