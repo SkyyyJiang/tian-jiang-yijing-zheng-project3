@@ -1,0 +1,19 @@
+.post-card {
+    border-bottom: 1px solid lightgray;
+    padding: 16px;
+}
+
+.bottom-bar {
+    font-size: 12px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.buttons {
+    display: flex;
+    gap: 16px;
+}
+.edit-container {
+    display: flex;
+    margin: 16px 0;
+}

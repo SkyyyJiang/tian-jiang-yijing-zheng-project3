@@ -32,15 +32,3 @@
   padding-inline-start: 16px;
   transition: color 0.5s;
 }
-
-.clickable-text {
-  text-transform: capitalize;
-  color: #757575;
-  font-weight: 400;
-  text-decoration: none;
-}
-
-.clickable-text:hover {
-  color: #2b2b2b;
-  cursor: pointer;
-}

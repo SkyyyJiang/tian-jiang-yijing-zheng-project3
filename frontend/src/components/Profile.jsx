@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useParams } from 'react-router-dom'
 import { useActiveUser } from "../context/ActiveUserContext";
+import "./Profile.css";
 
 import NavBar from "./NavBar";
 import CreateStatus from "./CreateStatus";
@@ -42,7 +43,7 @@ export default function Profile() {
                 description: descriptionInput,
             });
             setIsEditting(false);
-            setUser((currUser) => ({...currUser, description:  descriptionInput}));
+            setUser((currUser) => ({ ...currUser, description: descriptionInput }));
         } catch (e) {
             console.error(e);
             setError("Something went wrong. Please try again.");
@@ -54,16 +55,16 @@ export default function Profile() {
     }, []);
 
     console.log(isEditting);
-    
+
     if (!user) return;
 
     return (
         <div>
             <NavBar />
-            <div>
-                <h1>profile</h1>
+            <div className="spacing"></div>
+            <div className="user-profile-container">
                 <div>{user.username}</div>
-                <div>{new Date(user.joinedDate).toLocaleDateString()}</div>
+                <div className="secondary-text">Joined {new Date(user.joinedDate).toLocaleDateString()}</div>
 
                 {activeUsername != username ? (
                     <div>{user.description}</div>
@@ -85,8 +86,11 @@ export default function Profile() {
                 )}
             </div>
             {!!error && <div>{error}</div>}
-            {activeUsername == username && <CreateStatus username={activeUsername} />}
-            <DisplayStatus activeUsername={activeUsername} searchUsername={username} />
+            <div className="spacing"></div>
+            <div className="post-container">
+                {activeUsername == username && <CreateStatus username={activeUsername} />}
+                <DisplayStatus activeUsername={activeUsername} searchUsername={username} />
+            </div>
         </div>
     );
 }

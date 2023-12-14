@@ -11,8 +11,11 @@ export default function Home() {
   return (
     <div>
       <NavBar />
-      {activeUsername && <CreateStatus username={activeUsername} />}
-      <DisplayStatus activeUsername={activeUsername} searchUsername={null}/>
+      <div className="spacing"></div>
+      <div className="post-container">
+        {activeUsername && <CreateStatus username={activeUsername} />}
+        <DisplayStatus activeUsername={activeUsername} searchUsername={null} />
+      </div>
     </div>
   );
 }

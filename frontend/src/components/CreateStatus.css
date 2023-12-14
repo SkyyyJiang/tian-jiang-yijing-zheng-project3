@@ -1,0 +1,10 @@
+textarea {
+    resize: vertical;
+    width: 70vw;
+    margin: 0 8px;
+}
+
+.new-post-container {
+    display: flex;
+    margin-bottom: 16px;
+}

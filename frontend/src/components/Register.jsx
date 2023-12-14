@@ -2,11 +2,13 @@ import axios from "axios";
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router";
+import { useActiveUser } from "../context/ActiveUserContext";
 
 export default function Register() {
   const [usernameInput, setUsernameInput] = useState("");
   const [passwordInput, setPasswordInput] = useState("");
   const [error, setError] = useState("");
+  const { login } = useActiveUser();
 
   const navigate = useNavigate();
 
@@ -31,6 +33,7 @@ export default function Register() {
         username: usernameInput,
         password: passwordInput,
       });
+      login(usernameInput);
       navigate("/");
     } catch (e) {
       console.log(e);

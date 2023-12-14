@@ -10,16 +10,13 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  // isLoggedIn: {
-  //   type: Boolean,
-  //   default: false,
-  // },
   joinedDate: {
     type: Date,
     default: Date.now,
   },
   description: {
     type: String,
+    default: "no description",
   }
 });
 

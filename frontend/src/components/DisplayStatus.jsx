@@ -1,5 +1,7 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import "./DisplayStatus.css";
 
 export default function DisplayStatus({ activeUsername, searchUsername }) {
     const [posts, setPosts] = useState([]);
@@ -41,7 +43,7 @@ export default function DisplayStatus({ activeUsername, searchUsername }) {
             await axios.put(`/api/status/${postId}`, { username: username, content: newContent });
             setEditPostId(null);
             setPosts((currentPosts) =>
-                currentPosts.map((post) => post._id == postId? { ...post, content: newContent } : post)
+                currentPosts.map((post) => post._id == postId ? { ...post, content: newContent } : post)
             );
         } catch (error) {
             console.error("Error editing post:", error);
@@ -55,36 +57,39 @@ export default function DisplayStatus({ activeUsername, searchUsername }) {
     return (
         <div>
             {posts.map((post) => (
-                <div key={post._id}>
-                    <h3>{post.username}</h3>
+                <div key={post._id} className="post-card">
+                    <div className="title">
+                        <span><Link to={`/profile/${post.username}`} className="primary-text">{post.username}</Link></span>
+                        <span className="secondary-text"> said:</span>
+                    </div>
                     {editPostId === post._id ? (
-                        <div>
+                        <div className="edit-container">
                             <textarea
                                 value={editContent}
                                 onChange={(e) => setEditContent(e.target.value)}
                             />
-                            <button onClick={() => editStatus(post._id, post.username, editContent)}>
+                            <button
+                                onClick={() => editStatus(post._id, post.username, editContent)}>
                                 Save
                             </button>
                         </div>
                     ) : (
                         <div>
                             <p>{post.content}</p>
-                            <p>
-                                Posted on:{" "}
-                                {new Date(post.createdAt).toLocaleString()}
-                            </p>
-                            {activeUsername === post.username && (
-                                <div>
-                                    <button onClick={() => deleteStatus(post._id)}>Delete</button>
-                                    <button onClick={() => {
-                                        setEditPostId(post._id);
-                                        setEditContent(post.content);
-                                    }}>
-                                        Edit
-                                    </button>
-                                </div>
-                            )}
+                            <div className="bottom-bar">
+                                <div className="secondary-text">{new Date(post.createdAt).toLocaleString()}</div>
+                                {activeUsername === post.username && (
+                                    <div className="buttons">
+                                        <div onClick={() => deleteStatus(post._id)} className="clickable-text">Delete</div>
+                                        <div onClick={() => {
+                                            setEditPostId(post._id);
+                                            setEditContent(post.content);
+                                        }} className="clickable-text">
+                                            Edit
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     )}
                 </div>

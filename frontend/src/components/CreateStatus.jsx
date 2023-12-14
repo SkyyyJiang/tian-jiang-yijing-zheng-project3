@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import "./CreateStatus.css"
 
 export default function CreateStatus({ username }) {
     const [statusContentInput, setstatusContentInput] = useState("");
@@ -33,7 +34,7 @@ export default function CreateStatus({ username }) {
                 <textarea
                     value={statusContentInput}
                     onInput={setStatusContent}
-                    rows="4"
+                    rows="3"
                 ></textarea>
                 <button onClick={submit}>Post</button>
             </div>
